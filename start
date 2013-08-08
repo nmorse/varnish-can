@@ -1,0 +1,3 @@
+nodejs server.js varnish-can_nodejs-8080 1>./std.out 2>./err.out &
+ps -f -C nodejs
+
