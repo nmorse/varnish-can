@@ -21,7 +21,7 @@ var server = require('http').createServer(function (req, res) {
         r2 = md5_hex(r1+secret.password);
         res.writeHead(200, {'Content-Type': 'plain/text'});
         res.end(r1);
-        //console.log("varnish-can dip");
+        console.log("varnish-can dip");
     }
     else if (req.url === '/'+r2 && r2 !== 'noneshallpass') {
         r2 = 'noneshallpass';
@@ -31,7 +31,7 @@ var server = require('http').createServer(function (req, res) {
                 child;
             var e = this; 
             var cmd = 'varnishstat -1 -f client_conn,client_drop,client_req,cache_hit,cache_hitpass,cache_miss,backend_conn,backend_unhealthy,backend_busy,backend_fail,backend_reuse,backend_toolate,backend_recycle,backend_retry,n_lru_nuked,n_lru_moved,SMF.s0.g_space,SMF.s0.c_bytes,n_expired,uptime';
-            //console.log("varnish-can tap");
+            console.log("varnish-can tap");
 
             child = exec(cmd, function (error, stdout, stderr) {
                 e.emit("B", error, stdout, stderr);
@@ -55,9 +55,11 @@ var server = require('http').createServer(function (req, res) {
                         json_obj[name] = parseInt(match[2], 10);
                     }
                 }
-                //console.log("varnish-can wipe");
-                //console.log(JSON.stringify(json_obj));
-                res.end(JSON.stringify(json_obj));
+                console.log("varnish-can wipe");
+                console.log(JSON.stringify(json_obj));
+                req.write(JSON.stringify(json_obj));
+                req.write('\n');
+                res.end();
             }
         });
     }

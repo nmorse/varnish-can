@@ -1,1 +1,1 @@
-module.exports = {"password": "10ksdnaspars", "salt": "salta98377SjHgd"};
+module.exports = {"password": "aassddff", "salt": "salted"};
