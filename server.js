@@ -21,6 +21,7 @@ var server = require('http').createServer(function (req, res) {
         r2 = md5_hex(r1+secret.password);
         res.writeHead(200, {'Content-Type': 'plain/text'});
         res.end(r1);
+        setTimeout(function() {r2 = 'noneshallpass';}, 5000);
         //console.log("varnish-can dip");
     }
     else if (req.url === '/'+r2 && r2 !== 'noneshallpass') {
@@ -30,7 +31,7 @@ var server = require('http').createServer(function (req, res) {
             var exec = require('child_process').exec,
                 child;
             var e = this; 
-            var cmd = 'varnishstat -1 -f client_conn,client_drop,client_req,cache_hit,cache_hitpass,cache_miss,backend_conn,backend_unhealthy,backend_busy,backend_fail,backend_reuse,backend_toolate,backend_recycle,backend_retry,n_lru_nuked,n_lru_moved,SMF.s0.g_space,SMF.s0.c_bytes,n_expired,uptime';
+            var cmd = 'varnishstat -1 -f cache_hit,cache_miss,n_lru_moved,SMF.s0.g_space,SMF.s0.c_bytes,uptime';
             //console.log("varnish-can tap");
 
             child = exec(cmd, function (error, stdout, stderr) {
