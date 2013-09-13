@@ -1,6 +1,7 @@
 varnish-can
 ===========
 A nodejs, varnish-cache, status server, that works with varnish-brush
+
       ___
     //   \\
     |\___/|            _          _         _
