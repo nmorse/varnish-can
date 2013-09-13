@@ -1,18 +1,16 @@
+varnish-can
+===========
+A nodejs, varnish-cache, status server, that works with varnish-brush
       ___
     //   \\
     |\___/|            _          _         _
     |     |  \  / /\  |_) |\ | | (_  |_| _ /   /\  |\ |
     \_____/   \/ /--\ | \ | \| |  _) | |   \_ /--\ | \|
+    _ __ _ __ __ _ __ _ __ __ _ __ _ __ __ _ __ __ _ __
 
-varnish-can
-===========
+If you use varnish-cache on one or more servers and would like to keep an eye on how varnish is running, then consider installing varnish-can (on the varnish-cache server) and varnish-brush (on a separate server) as a stats archiver and graphing utility.
 
-A nodejs, varnish-cache, status server, that works with varnish-brush
-
-If you use varnish-cache on one or more servers and would like to keep an eye on the 
-great service that varnish provides, then consider installing varnish-can (on the varnish server) and varnish-brush as a stats archiver and graphing utility.
-
-Varnish-can is a small nodjs app that can report on varnish-cache stats.
+Varnish-can is a small nodjs app that reports on varnish-cache (stats, logs, top).
 
 Install
 -------
@@ -26,7 +24,9 @@ Objectives
 ----------
 
  * Light weight 
-   -- minimal install on the varnish server, only uses core NodeJS features. No need for npm or any NodeJS modules. Small footprint etc.
+   -- Minimal install on the varnish server, only uses core NodeJS features. No need for npm or any NodeJS modules. Small footprint etc.
  * Authorized access 
-   -- Without an SSL key, the access password is encrypted during transport. 
- * 
+   -- No SSL key is required, but some security (on who could access the stats) is provided. Namely, the access password is encrypted during transport, and a onetime use URL used for every access. 
+ * No need for connecting via SSH to get stats :( Not easy in all server environments).
+ * Did I say light weight?
+   -- Well, saying it again, keeping it small, light, simple, so as to keep out of Varnish-Cache's hair.
