@@ -1,8 +1,10 @@
 //varnish-can (works with varnish-brush) A status server for varnish.
 var http = require('http');
 var crypto = require('crypto');
+// set up the sevrver resource state (r2) in protect mode
 var r2 = 'noneshallpass';
 var secret = require('./secret.js');
+// using Events as a way to searalize js callbacks (ToDo: maybe use async.js)
 var EE = require('events').EventEmitter;
 
 var md5_hex = function(plain_txt) {
@@ -15,18 +17,28 @@ var server = require('http').createServer(function (req, res) {
     var r1;
     var d;
     var e;
+    // this server has two modes, first it replys to a request for a special url (a resource).
+    // Secondly it responds to the special URL and returns data, otherwise 404 error.
     if (req.url === '/varnishstats' && r2 === 'noneshallpass') {
         d = new Date();
+        // set up a new resource (r1) that will respond to a second request.
         r1 = md5_hex(d+secret.salt+Math.random());
+        // next hash r1+password (this password is the public key).
+        // the client will do this same operation to determine the resource to access.
         r2 = md5_hex(r1+secret.password);
+        // reply with the public resource (r1)
         res.writeHead(200, {'Content-Type': 'plain/text'});
         res.end(r1);
+        // r2 is a temporary resource... gets reset in a short time. 
         setTimeout(function() {r2 = 'noneshallpass';}, 5000);
         //console.log("varnish-can dip");
     }
     else if (req.url === '/'+r2 && r2 !== 'noneshallpass') {
         r2 = 'noneshallpass';
         e = new EE();
+        // the stats data is compiled form 2 varnish utility calls...
+        // A. varnishstat 
+        // B. varnishtop
         e.on("A", function() {
             var exec = require('child_process').exec,
                 child;
@@ -49,14 +61,11 @@ var server = require('http').createServer(function (req, res) {
                             json_obj[name] = parseInt(match[2], 10);
                         }
                     }
-                    //console.log("varnish-can wipe");
-                    //console.log(JSON.stringify(json_obj));
                 }
                 e.emit("B", json_obj);
             });
         });
         e.on("B", function(json_obj) {
-            //e.emit("C", out_str+ " Hello");
             var exec = require('child_process').exec,
                 child;
             var e = this; 
@@ -85,17 +94,18 @@ var server = require('http').createServer(function (req, res) {
                     //console.log(JSON.stringify(json_obj2));
                     
                 }                
-                e.emit("C", {"stats":json_obj, "domains":json_obj2});
+                e.emit("End", {"stats":json_obj, "domains":json_obj2});
             });
             
         });
-        e.on("C", function(out_obj) {
+        e.on("End", function(out_obj) {
             //console.log("varnish-can drip");
+            // TODO add in and test res.writeHead(200, {'Content-Type': 'application/json'});
             res.write(JSON.stringify(out_obj));
             res.write('\n');
             res.end();
         });
-        // LGTPS
+        // LGTPS (lets get this party started)
         e.emit("A");
     }
     else {
