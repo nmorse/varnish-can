@@ -21,12 +21,12 @@ var server = require('http').createServer(function (req, res) {
     // Secondly it responds to the special URL and returns data, otherwise 404 error.
     if (req.url === '/varnishstats' && r2 === 'noneshallpass') {
         d = new Date();
-        // set up a new resource (r1) that will respond to a second request.
+        // set up a random string (r1) with date, salt and random.
         r1 = md5_hex(d+secret.salt+Math.random());
-        // next hash r1+password (this password is the public key).
-        // the client will do this same operation to determine the resource to access.
+        // next re-hash r1 with password (this password is a public key).
+        // the client will do this same r1+password operation to determine the resource to access.
         r2 = md5_hex(r1+secret.password);
-        // reply with the public resource (r1)
+        // reply with the random string (r1)
         res.writeHead(200, {'Content-Type': 'plain/text'});
         res.end(r1);
         // r2 is a temporary resource... gets reset in a short time. 
